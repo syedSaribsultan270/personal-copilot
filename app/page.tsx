@@ -1,8 +1,36 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
+
 export default function Home() {
+  const cursorRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cursor = cursorRef.current;
+    const glow = glowRef.current;
+
+    const moveCursor = (e: MouseEvent) => {
+      if (cursor && glow) {
+        // Use transform with translate3d for GPU acceleration
+        cursor.style.transform = `translate3d(${e.clientX - 6}px, ${e.clientY - 6}px, 0)`;
+        glow.style.transform = `translate3d(${e.clientX - 150}px, ${e.clientY - 150}px, 0)`;
+      }
+    };
+
+    window.addEventListener('mousemove', moveCursor, { passive: true });
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+    };
+  }, []);
+
   return (
     <div style={{ minHeight: '100vh', background: '#0a0a0a', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif', position: 'relative', overflow: 'hidden' }}>
+      {/* Custom Cursor */}
+      <div ref={cursorRef} className="custom-cursor"></div>
+      <div ref={glowRef} className="cursor-glow"></div>
+      
       {/* Animated Gradient Background */}
       <div style={{ 
         position: 'fixed', 
@@ -38,7 +66,87 @@ export default function Home() {
             50% { transform: translate(80px, 80px) scale(0.9) rotate(180deg); }
             75% { transform: translate(-60px, 100px) scale(1.05) rotate(270deg); }
           }
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes scaleIn {
+            from {
+              opacity: 0;
+              transform: scale(0.9);
+            }
+            to {
+              opacity: 1;
+              transform: scale(1);
+            }
+          }
+          @keyframes slideInLeft {
+            from {
+              opacity: 0;
+              transform: translateX(-30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          @keyframes slideInRight {
+            from {
+              opacity: 0;
+              transform: translateX(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+          .animate-fadeInUp {
+            animation: fadeInUp 0.8s ease-out forwards;
+          }
+          .animate-fadeIn {
+            animation: fadeIn 1s ease-out forwards;
+          }
+          .animate-scaleIn {
+            animation: scaleIn 0.6s ease-out forwards;
+          }
+          .animate-slideInLeft {
+            animation: slideInLeft 0.7s ease-out forwards;
+          }
+          .animate-slideInRight {
+            animation: slideInRight 0.7s ease-out forwards;
+          }
+          .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+          .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+          .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+          .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+          .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+          .stagger-6 { animation-delay: 0.6s; opacity: 0; }
+          .stagger-7 { animation-delay: 0.7s; opacity: 0; }
+          .stagger-8 { animation-delay: 0.8s; opacity: 0; }
         `}</style>
+        
+        {/* Grainy Texture Overlay */}
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+          opacity: 0.03,
+          pointerEvents: 'none',
+          mixBlendMode: 'overlay'
+        }} />
         
         {/* Blob 1 - Orange */}
         <div style={{
@@ -113,24 +221,24 @@ export default function Home() {
       {/* Hero Section */}
       <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '80px 24px' }}>
         <div style={{ maxWidth: '896px', margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ marginBottom: '24px' }}>
+          <div style={{ marginBottom: '24px' }} className="animate-fadeIn">
             <span style={{ color: '#9ca3af', fontSize: '14px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               A Powerful AI Assistant
             </span>
           </div>
-          <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.75rem)', fontWeight: 'bold', marginBottom: '24px', lineHeight: '1.1' }}>
-            <span style={{ color: '#f97316' }}>Personal Copilot</span>
+          <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.75rem)', fontWeight: 'bold', marginBottom: '24px', lineHeight: '1.1' }} className="animate-fadeInUp stagger-1">
+            TOA <span style={{ color: '#f97316' }}>Personal Copilot</span>
           </h1>
-          <p style={{ color: '#9ca3af', fontSize: '1.25rem', maxWidth: '768px', margin: '0 auto 48px auto', lineHeight: '1.75' }}>
+          <p style={{ color: '#9ca3af', fontSize: '1.25rem', maxWidth: '768px', margin: '0 auto 48px auto', lineHeight: '1.75' }} className="animate-fadeInUp stagger-2">
             An AI-powered chatbot with state-of-the-art document retrieval, 
             featuring hybrid search (BM25 + Vector), cross-encoder reranking, and 
             hallucination detection. Built with FastAPI, Next.js, and Ollama.
           </p>
-          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <button style={{ background: '#f97316', color: 'white', padding: '12px 32px', borderRadius: '8px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px' }}>
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }} className="animate-fadeInUp stagger-3">
+            <button style={{ background: '#f97316', color: 'white', padding: '12px 32px', borderRadius: '8px', fontWeight: '600', border: 'none', cursor: 'pointer', fontSize: '16px', transition: 'transform 0.2s, box-shadow 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(249, 115, 22, 0.3)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
               Get Started Now
             </button>
-            <button style={{ border: '1px solid #374151', background: 'transparent', color: 'white', padding: '12px 32px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '16px' }}>
+            <button style={{ border: '1px solid #374151', background: 'transparent', color: 'white', padding: '12px 32px', borderRadius: '8px', fontWeight: '600', cursor: 'pointer', fontSize: '16px', transition: 'all 0.2s' }} onMouseOver={(e) => { e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.transform = 'translateY(-2px)'; }} onMouseOut={(e) => { e.currentTarget.style.borderColor = '#374151'; e.currentTarget.style.transform = 'translateY(0)'; }}>
               Explore Features →
             </button>
           </div>
@@ -140,8 +248,8 @@ export default function Home() {
       {/* Features Section */}
       <section style={{ padding: '80px 24px', background: '#0f0f0f' }}>
         <div style={{ maxWidth: '1152px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>Features</h2>
-          <p style={{ color: '#9ca3af', fontSize: '1.125rem', textAlign: 'center', marginBottom: '64px' }}>State-of-the-art AI capabilities in one powerful copilot</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }} className="animate-fadeInUp">Features</h2>
+          <p style={{ color: '#9ca3af', fontSize: '1.125rem', textAlign: 'center', marginBottom: '64px' }} className="animate-fadeInUp stagger-1">State-of-the-art AI capabilities in one powerful copilot</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px' }}>
             {[
               { icon: "💬", title: "Conversational AI", description: "Chat with local LLM using Ollama llama3.2:3b model" },
@@ -153,7 +261,7 @@ export default function Home() {
               { icon: "💾", title: "PostgreSQL Storage", description: "Persistent conversations with full history tracking" },
               { icon: "🎙", title: "Voice Input", description: "Speech-to-text with Whisper integration (optional)" }
             ].map((feature, index) => (
-              <div key={index} style={{ background: '#151515', border: '1px solid #1f2937', borderRadius: '8px', padding: '24px' }}>
+              <div key={index} style={{ background: '#151515', border: '1px solid #1f2937', borderRadius: '8px', padding: '24px', transition: 'all 0.3s' }} className={`animate-scaleIn stagger-${(index % 8) + 1}`} onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-8px)'; e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.boxShadow = '0 20px 40px rgba(249, 115, 22, 0.1)'; }} onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.boxShadow = 'none'; }}>
                 <div style={{ fontSize: '2.5rem', marginBottom: '16px' }}>{feature.icon}</div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '8px' }}>{feature.title}</h3>
                 <p style={{ color: '#9ca3af', fontSize: '0.875rem' }}>{feature.description}</p>
@@ -166,10 +274,10 @@ export default function Home() {
       {/* Tech Stack Section */}
       <section style={{ padding: '80px 24px' }}>
         <div style={{ maxWidth: '1152px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }}>Tech Stack</h2>
-          <p style={{ color: '#9ca3af', fontSize: '1.125rem', textAlign: 'center', marginBottom: '64px' }}>Built with modern, powerful technologies and frameworks</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' }} className="animate-fadeInUp">Tech Stack</h2>
+          <p style={{ color: '#9ca3af', fontSize: '1.125rem', textAlign: 'center', marginBottom: '64px' }} className="animate-fadeInUp stagger-1">Built with modern, powerful technologies and frameworks</p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '48px' }}>
-            <div style={{ background: '#0f0f0f', border: '1px solid #1f2937', borderRadius: '8px', padding: '32px' }}>
+            <div style={{ background: '#0f0f0f', border: '1px solid #1f2937', borderRadius: '8px', padding: '32px', transition: 'all 0.3s' }} className="animate-slideInLeft" onMouseOver={(e) => { e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.transform = 'scale(1.02)'; }} onMouseOut={(e) => { e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.transform = 'scale(1)'; }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                 <div style={{ fontSize: '2rem' }}>🖥</div>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Backend</h3>
@@ -192,7 +300,7 @@ export default function Home() {
                 ))}
               </ul>
             </div>
-            <div style={{ background: '#0f0f0f', border: '1px solid #1f2937', borderRadius: '8px', padding: '32px' }}>
+            <div style={{ background: '#0f0f0f', border: '1px solid #1f2937', borderRadius: '8px', padding: '32px', transition: 'all 0.3s' }} className="animate-slideInRight" onMouseOver={(e) => { e.currentTarget.style.borderColor = '#f97316'; e.currentTarget.style.transform = 'scale(1.02)'; }} onMouseOut={(e) => { e.currentTarget.style.borderColor = '#1f2937'; e.currentTarget.style.transform = 'scale(1)'; }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                 <div style={{ fontSize: '2rem' }}>🎨</div>
                 <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Frontend</h3>
