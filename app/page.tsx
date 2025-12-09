@@ -227,7 +227,7 @@ export default function Home() {
             </span>
           </div>
           <h1 style={{ fontSize: 'clamp(2.5rem, 5vw, 3.75rem)', fontWeight: 'bold', marginBottom: '24px', lineHeight: '1.1' }} className="animate-fadeInUp stagger-1">
-            TOA <span style={{ color: '#f97316' }}>Personal Copilot</span>
+          <span style={{ color: '#f97316' }}>Personal Copilot</span>
           </h1>
           <p style={{ color: '#9ca3af', fontSize: '1.25rem', maxWidth: '768px', margin: '0 auto 48px auto', lineHeight: '1.75' }} className="animate-fadeInUp stagger-2">
             An AI-powered chatbot with state-of-the-art document retrieval, 
